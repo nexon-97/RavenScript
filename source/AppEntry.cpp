@@ -2,6 +2,7 @@
 #include <sstream>
 
 #include "Interpreter.hpp"
+#include "fsm/StateMachineDesc.hpp"
 
 const int VERSION_MAJOR = 0;
 const int VERSION_MINOR = 1;
@@ -14,6 +15,9 @@ int main(int argc, char** argv)
 
 	auto interpreter = ravenscript::Interpreter();
 	interpreter.DoFile("script\\init.rs");
+
+	//ravenscript::fsm::StateMachineDesc fsmDesc;
+	//fsmDesc.LoadFromFile("fsm_data\\fsm_descriptions.xml", "identifier");
 
 	system("pause");
 	return 0;

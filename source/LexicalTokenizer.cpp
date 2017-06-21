@@ -6,7 +6,7 @@
 namespace ravenscript
 {
 
-bool LexicalTokenizer::Parse(char* textBlob, std::vector<LexicalToken>* tokensList)
+bool LexicalTokenizer::Parse(char* textBlob, std::vector<LexicalToken>& tokensList)
 {
 	char* currentToken = textBlob;
 	int tokenLength = 0;
@@ -22,7 +22,7 @@ bool LexicalTokenizer::Parse(char* textBlob, std::vector<LexicalToken>* tokensLi
 	{
 		if (tokenLength > 0)
 		{
-			tokensList->emplace_back(currentToken, tokenLength, LexicalToken::TokenType::Identifier);
+			tokensList.emplace_back(currentToken, tokenLength, LexicalToken::TokenType::Identifier);
 		}
 	};
 

@@ -4,7 +4,7 @@ project "RavenScript"
 	location "vs2013"
 	debugdir ".."
 
-	files { "../source/**.hpp", "../source/**.cpp" }
+	files { "../source/**.hpp", "../source/**.h", "../source/**.cpp" }
 	includedirs
 	{
 		"../source"

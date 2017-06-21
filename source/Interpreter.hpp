@@ -1,5 +1,8 @@
 #pragma once
 #include "Stack.hpp"
+#include "Blob.hpp"
+#include "fsm/StateMachine.hpp"
+#include "fsm/ProductionId.hpp"
 
 namespace ravenscript
 {
@@ -14,10 +17,11 @@ public:
 	int LoadModule(const char* path);
 
 protected:
-	char* LoadFile(const char* path) const;
+	void InitProductions();
 
 protected:
 	Stack m_stack;
+	fsm::StateMachinePtr m_productions[ProductionId::Count];
 };
 
 }

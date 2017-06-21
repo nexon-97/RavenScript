@@ -1,0 +1,23 @@
+<descriptions>
+	<state_types>
+		<type id="symbol" terminal="true" />
+		<type id="letter" terminal="true" />
+		<type id="digit" terminal="true" />
+	</state_types>
+	<fsm id="identifier">
+		<states>
+			<state id="underscore" type="symbol" value="_" />
+			<state id="anyLetter" type="letter" />
+			<state id="anyDigit" type="digit" />
+		</states>
+		<transitions>
+			<transition from="start" to="underscore" />
+			<transition from="start" to="anyLetter" />
+			<transition from="anyLetter" to="underscore" bidirectional="true" />
+			<transition from="anyLetter" to="anyDigit" bidirectional="true" />
+			<transition from="anyLetter" to="end" />
+			<transition from="underscore" to="end" />
+			<transition from="anyDigit" to="end" />
+		</transitions>
+	</fsm>
+</descriptions>

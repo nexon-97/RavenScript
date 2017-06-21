@@ -46,7 +46,7 @@ LexicalToken::LexicalToken(char* value, int size, TokenType type)
 	: m_type(type)
 {
 	m_value.reset(new Blob(new char[size + 1], size + 1));
-	std::strncpy(m_value->data, value, size);
+	strncpy_s(m_value->data, size + 1, value, size);
 	m_value->data[size] = '\0';
 }
 	

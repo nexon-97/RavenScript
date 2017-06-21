@@ -9,7 +9,7 @@ namespace ravenscript
 class LexicalTokenizer
 {
 public:
-	bool Parse(char* textBlob, std::vector<LexicalToken>* tokensList);
+	bool Parse(char* textBlob, std::vector<LexicalToken>& tokensList);
 };
 
 }

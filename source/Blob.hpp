@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <memory>
 
 namespace ravenscript
 {
@@ -22,5 +23,7 @@ struct Blob
 		}
 	}
 };
+
+using BlobPtr = std::shared_ptr<Blob>;
 
 }
