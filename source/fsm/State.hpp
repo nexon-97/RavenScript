@@ -1,6 +1,5 @@
 #pragma once
 #include <memory>
-#include "LexicalToken.hpp"
 
 namespace ravenscript
 {
@@ -13,10 +12,8 @@ public:
 	State();
 	virtual ~State();
 
-	virtual bool Match(LexicalToken* token) = 0;
-
-	virtual void OnEnter() {}
-	virtual void OnExit() {}
+	virtual bool Parse(char** istream) = 0;
+	virtual bool IsAvailable(char* istream) = 0;
 };
 
 using StatePtr = std::shared_ptr<State>;

@@ -15,6 +15,9 @@ public:
 	{}
 	~Transition() = default;
 
+	StatePtr GetSourceState() const { return m_from; }
+	StatePtr GetDestinationState() const { return m_to; }
+
 protected:
 	StatePtr m_from;
 	StatePtr m_to;

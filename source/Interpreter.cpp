@@ -1,7 +1,6 @@
 #pragma once
 #include "Interpreter.hpp"
 #include "LexicalTokenizer.hpp"
-#include "fsm/NumberFSM.hpp"
 #include "Utils.hpp"
 
 #include <iostream>
@@ -53,8 +52,7 @@ int Interpreter::LoadModule(const char* path)
 
 void Interpreter::InitProductions()
 {
-	m_productions[ProductionId::Number].reset(new NumberFSM());
-	auto& numberProduction = m_productions[ProductionId::Number];
+	
 }
 
 }

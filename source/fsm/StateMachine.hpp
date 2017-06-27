@@ -19,12 +19,25 @@ public:
 	void AddState(const StatePtr& state);
 	void AddTransition(const StatePtr& from, const StatePtr& to);
 
-	bool Load(const char* path);
+	StatePtr GetEntryState() const { return m_entryState; }
+	StatePtr GetFinalState() const { return m_finalState; }
+
+	virtual bool Parse(char** istream) override;
+	virtual bool IsAvailable(char* istream) override;
+
+protected:
+	void SetCurrentState(const StatePtr& state);
+	void UpdatePossibleStates();
+
+	bool DoStep(char** istream);
 
 protected:
 	std::vector<StatePtr> m_states;
 	std::vector<TransitionPtr> m_transitions;
-	LexicalToken* m_currentToken = nullptr;
+	std::vector<StatePtr> m_possibleStates;
+	StatePtr m_entryState;
+	StatePtr m_finalState;
+	StatePtr m_currentState;
 };
 
 using StateMachinePtr = std::shared_ptr<StateMachine>;

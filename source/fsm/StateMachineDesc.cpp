@@ -1,5 +1,6 @@
 #include "StateMachineDesc.hpp"
 #include "Utils.hpp"
+#include "StateTypes.hpp"
 #include <cassert>
 
 namespace ravenscript
@@ -14,11 +15,10 @@ bool StateMachineDesc::LoadFromFile(const char* path, const char* fsmId)
 	{
 		auto root = document->RootElement();
 
-		auto stateTypesNode = root->FirstChildElement("state_types");
-		if (!LoadStateTypes(stateTypesNode))
+		if (!StateTypes::HasInstance())
 		{
-			std::cerr << "Failed to load fsm state types description!" << std::endl;
-			return false;
+			auto stateTypes = new StateTypes();
+			stateTypes->Init();
 		}
 
 		// Load fsm nodes
@@ -47,22 +47,6 @@ bool StateMachineDesc::SaveToFile(const char* path)
 {
 	// Not implemented yet
 	return false;
-}
-
-bool StateMachineDesc::LoadStateTypes(tinyxml2::XMLElement* element)
-{
-	if (!element)
-		return false;
-
-	for (auto typeNode = element->FirstChildElement("type"); !!typeNode; typeNode = typeNode->NextSiblingElement())
-	{
-		std::string id = utils::ValueOrEmpty(typeNode->Attribute("id"));
-		bool terminal = typeNode->BoolAttribute("terminal");
-
-		m_stateTypes.emplace(std::make_pair(std::string(id), StateType(id, terminal)));
-	}
-
-	return true;
 }
 
 bool StateMachineDesc::LoadStates(tinyxml2::XMLElement* element)

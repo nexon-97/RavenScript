@@ -60,7 +60,6 @@ public:
 	const std::vector<TransitionInfo>& GetTransitions() const { return m_transitions; }
 
 protected:
-	bool LoadStateTypes(tinyxml2::XMLElement* element);
 	bool LoadStates(tinyxml2::XMLElement* element);
 	bool LoadTransitions(tinyxml2::XMLElement* element);
 

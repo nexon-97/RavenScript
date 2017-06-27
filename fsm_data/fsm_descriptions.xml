@@ -1,9 +1,4 @@
 <descriptions>
-	<state_types>
-		<type id="symbol" terminal="true" />
-		<type id="letter" terminal="true" />
-		<type id="digit" terminal="true" />
-	</state_types>
 	<fsm id="identifier">
 		<states>
 			<state id="underscore" type="symbol" value="_" />
