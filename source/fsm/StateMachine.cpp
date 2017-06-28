@@ -39,7 +39,8 @@ bool StateMachine::Parse(char** istream)
 
 	while (DoStep(istream));
 
-	return std::find(m_possibleStates.begin(), m_possibleStates.end(), m_finalState) != m_possibleStates.end();
+	bool streamEnded = (**istream == '\0');
+	return streamEnded && std::find(m_possibleStates.begin(), m_possibleStates.end(), m_finalState) != m_possibleStates.end();
 }
 
 bool StateMachine::DoStep(char** istream)
