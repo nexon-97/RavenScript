@@ -12,8 +12,8 @@ class LexicalToken
 public:
 	enum class TokenType
 	{
-		Identifier,
-		Number,
+		Letter,
+		Digit,
 		Operator
 	};
 

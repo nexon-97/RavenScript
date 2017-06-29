@@ -2,6 +2,7 @@
 #include "EmptyState.hpp"
 #include <algorithm>
 #include <iterator>
+#include <functional>
 
 namespace ravenscript
 {
@@ -27,28 +28,28 @@ void StateMachine::AddState(const StatePtr& state)
 	m_states.push_back(state);
 }
 
-void StateMachine::AddTransition(const StatePtr& from, const StatePtr& to)
+void StateMachine::AddTransition(const StatePtr& from, const StatePtr& to, int priority)
 {
-	m_transitions.push_back(std::make_shared<Transition>(from, to));
+	m_transitions.push_back(std::make_shared<Transition>(from, to, priority));
 }
 
-bool StateMachine::Parse(char** istream)
+bool StateMachine::Parse(LexicalToken*& istream, LexicalToken* end)
 {
 	// Reset fsm state to entry
 	SetCurrentState(m_entryState);
 
-	while (DoStep(istream));
+	// Enter recursion
+	DoStep(istream, end);
 
-	bool streamEnded = (**istream == '\0');
-	return streamEnded && std::find(m_possibleStates.begin(), m_possibleStates.end(), m_finalState) != m_possibleStates.end();
+	return std::find(m_possibleStates.begin(), m_possibleStates.end(), m_finalState) != m_possibleStates.end();
 }
 
-bool StateMachine::DoStep(char** istream)
+void StateMachine::DoStep(LexicalToken*& istream, LexicalToken* end)
 {
 	std::vector<StatePtr> validStates;
-	auto validStateFilter = [istream](const StatePtr& state)
+	auto validStateFilter = [&istream, end](const StatePtr& state)
 	{
-		return state->IsAvailable(*istream);
+		return state->IsAvailable(istream, end);
 	};
 
 	std::copy_if(m_possibleStates.begin(), m_possibleStates.end(), std::back_inserter(validStates), validStateFilter);
@@ -57,20 +58,18 @@ bool StateMachine::DoStep(char** istream)
 	{
 		SetCurrentState(state);
 
-		if (state->Parse(istream))
+		if (state->Parse(istream, end))
 		{
-			return true;
+			DoStep(istream, end);
 		}
 	}
-
-	return false;
 }
 
-bool StateMachine::IsAvailable(char* istream)
+bool StateMachine::IsAvailable(LexicalToken*& istream, LexicalToken* end)
 {
-	auto pred = [istream](const StatePtr& state)
+	auto pred = [&istream, end](const StatePtr& state)
 	{
-		return state->IsAvailable(istream);
+		return state->IsAvailable(istream, end);
 	};
 	auto it = std::find_if(m_states.begin(), m_states.end(), pred);
 
@@ -96,6 +95,11 @@ void StateMachine::UpdatePossibleStates()
 	};
 
 	std::copy_if(m_transitions.begin(), m_transitions.end(), std::back_inserter(validTransitions), validTransitionsFilter);
+	auto priorityComparator = [](const TransitionPtr& lhs, const TransitionPtr& rhs)
+	{
+		return lhs->GetPriority() > rhs->GetPriority();
+	};
+	std::sort(validTransitions.begin(), validTransitions.end(), priorityComparator);
 
 	// Fill destination states vector
 	for (const TransitionPtr& transition : validTransitions)

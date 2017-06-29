@@ -22,7 +22,26 @@ bool LexicalTokenizer::Parse(char* textBlob, std::vector<LexicalToken>& tokensLi
 	{
 		if (tokenLength > 0)
 		{
-			tokensList.emplace_back(currentToken, tokenLength, LexicalToken::TokenType::Identifier);
+			auto symbolGroup = LexicalToken::GetSymbolGroup(currentToken[0]);
+			LexicalToken::TokenType tokenType;
+
+			switch (symbolGroup)
+			{
+			case LexicalToken::SymbolGroup::Digit:
+				tokenType = LexicalToken::TokenType::Digit;
+				break;
+			case LexicalToken::SymbolGroup::Letter:
+				tokenType = LexicalToken::TokenType::Letter;
+				break;
+			case LexicalToken::SymbolGroup::Sign:
+				tokenType = LexicalToken::TokenType::Operator;
+				break;
+			default:
+				tokenType = LexicalToken::TokenType::Operator;
+				break;
+			}
+
+			tokensList.emplace_back(currentToken, tokenLength, tokenType);
 		}
 	};
 

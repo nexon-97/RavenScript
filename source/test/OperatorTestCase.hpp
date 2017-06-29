@@ -8,15 +8,15 @@ namespace ravenscript
 namespace test
 {
 
-class TokenTestCase : public TestCase
+class OperatorTestCase : public TestCase
 {
 public:
-	explicit TokenTestCase(const std::string& name, const std::string& input, const fsm::StateMachinePtr& stateMachine)
+	explicit OperatorTestCase(const std::string& name, const std::string& input, const fsm::StateMachinePtr& stateMachine)
 		: TestCase(name)
 		, m_input(input)
 		, m_stateMachine(stateMachine)
 	{}
-	virtual ~TokenTestCase() = default;
+	virtual ~OperatorTestCase() = default;
 
 	virtual bool Test() override
 	{
@@ -28,12 +28,12 @@ public:
 		LexicalToken* end = tokensList.data() + tokensList.size();
 		m_result = m_stateMachine->Parse(stream, end);
 
-		return m_result && stream == end;
+		return m_result;
 	}
 
 	virtual void PrintResult(std::ostream& stream) override
 	{
-		stream << m_input << " is valid token: " << (m_result ? "OK." : "FAIL.") << std::endl;
+		stream << "[" << m_name << "] " << m_input << " is valid operator? " << (m_result ? "OK." : "FAIL.") << std::endl;
 	}
 
 protected:

@@ -15,12 +15,12 @@ EmptyState::~EmptyState()
 
 }
 
-bool EmptyState::Parse(char** istream)
+bool EmptyState::Parse(LexicalToken*& istream, LexicalToken* end)
 {
 	return false;
 }
 
-bool EmptyState::IsAvailable(char* istream)
+bool EmptyState::IsAvailable(LexicalToken*& istream, LexicalToken* end)
 {
 	return false;
 }

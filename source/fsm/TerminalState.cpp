@@ -16,15 +16,16 @@ TerminalState::~TerminalState()
 
 }
 
-bool TerminalState::Parse(char** istream)
+bool TerminalState::Parse(LexicalToken*& istream, LexicalToken* end)
 {
-	(*istream)++;
+	//(*istream)++;
 	return true;
 }
 
-bool TerminalState::IsAvailable(char* istream)
+bool TerminalState::IsAvailable(LexicalToken*& istream, LexicalToken* end)
 {
-	return m_availableSymbols.find(*istream) != m_availableSymbols.end();
+	return false;
+	//return m_availableSymbols.find(*istream) != m_availableSymbols.end();
 }
 
 }

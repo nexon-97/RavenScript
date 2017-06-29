@@ -17,19 +17,19 @@ public:
 	virtual ~StateMachine();
 
 	void AddState(const StatePtr& state);
-	void AddTransition(const StatePtr& from, const StatePtr& to);
+	void AddTransition(const StatePtr& from, const StatePtr& to, int priority);
 
 	StatePtr GetEntryState() const { return m_entryState; }
 	StatePtr GetFinalState() const { return m_finalState; }
 
-	virtual bool Parse(char** istream) override;
-	virtual bool IsAvailable(char* istream) override;
+	virtual bool Parse(LexicalToken*& istream, LexicalToken* end) override;
+	virtual bool IsAvailable(LexicalToken*& istream, LexicalToken* end) override;
 
 protected:
 	void SetCurrentState(const StatePtr& state);
 	void UpdatePossibleStates();
 
-	bool DoStep(char** istream);
+	void DoStep(LexicalToken*& istream, LexicalToken* end);
 
 protected:
 	std::vector<StatePtr> m_states;

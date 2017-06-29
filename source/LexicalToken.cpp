@@ -39,6 +39,7 @@ std::map<char, LexicalToken::SymbolGroup> LexicalToken::s_symbolGroupMapping
 	std::make_pair('8', SymbolGroup::Digit),
 	std::make_pair('9', SymbolGroup::Digit),
 	std::make_pair('$', SymbolGroup::Letter),
+	std::make_pair('_', SymbolGroup::Letter),
 };
 
 
