@@ -13,7 +13,7 @@ public:
 	explicit TerminalState(const std::set<char>& symbols);
 	virtual ~TerminalState();
 
-	virtual bool Parse(LexicalToken*& istream, LexicalToken* end) override;
+	virtual ast::NodePtr Parse(LexicalToken*& istream, LexicalToken* end, const ast::NodePtr& inputNode) override;
 	virtual bool IsAvailable(LexicalToken*& istream, LexicalToken* end) override;
 
 protected:

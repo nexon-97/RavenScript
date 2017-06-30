@@ -12,7 +12,7 @@ public:
 	EmptyState();
 	virtual ~EmptyState();
 
-	virtual bool Parse(LexicalToken*& istream, LexicalToken* end) override;
+	virtual ast::NodePtr Parse(LexicalToken*& istream, LexicalToken* end, const ast::NodePtr& inputNode) override;
 	virtual bool IsAvailable(LexicalToken*& istream, LexicalToken* end) override;
 };
 

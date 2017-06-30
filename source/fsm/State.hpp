@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include "LexicalToken.hpp"
+#include "ast/Node.hpp"
 
 namespace ravenscript
 {
@@ -15,7 +16,7 @@ public:
 	State();
 	virtual ~State();
 
-	virtual bool Parse(LexicalToken*& istream, LexicalToken* end) = 0;
+	virtual ast::NodePtr Parse(LexicalToken*& istream, LexicalToken* end, const ast::NodePtr& inputNode) = 0;
 	virtual bool IsAvailable(LexicalToken*& istream, LexicalToken* end) = 0;
 
 	void SetName(const std::string& name) { m_name = name; }

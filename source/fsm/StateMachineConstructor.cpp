@@ -3,6 +3,7 @@
 #include "DigitState.hpp"
 #include "LetterState.hpp"
 #include "WordState.hpp"
+#include "IdentifierStateMachine.hpp"
 
 namespace ravenscript
 {
@@ -11,7 +12,7 @@ namespace fsm
 
 StateMachinePtr StateMachineConstructor::ConstructIdentifierFSM()
 {
-	StateMachinePtr identifierFsm = std::make_shared<StateMachine>();
+	StateMachinePtr identifierFsm = std::make_shared<IdenitifierStateMachine>();
 	auto startState = identifierFsm->GetEntryState();
 	auto finalState = identifierFsm->GetFinalState();
 	startState->SetName("[START]");

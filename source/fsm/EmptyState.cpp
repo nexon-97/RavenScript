@@ -15,7 +15,7 @@ EmptyState::~EmptyState()
 
 }
 
-bool EmptyState::Parse(LexicalToken*& istream, LexicalToken* end)
+ast::NodePtr EmptyState::Parse(LexicalToken*& istream, LexicalToken* end, const ast::NodePtr& inputNode)
 {
 	return false;
 }

@@ -22,14 +22,14 @@ public:
 	StatePtr GetEntryState() const { return m_entryState; }
 	StatePtr GetFinalState() const { return m_finalState; }
 
-	virtual bool Parse(LexicalToken*& istream, LexicalToken* end) override;
+	virtual ast::NodePtr Parse(LexicalToken*& istream, LexicalToken* end, const ast::NodePtr& inputNode) override;
 	virtual bool IsAvailable(LexicalToken*& istream, LexicalToken* end) override;
 
 protected:
-	void SetCurrentState(const StatePtr& state);
+	virtual void SetCurrentState(const StatePtr& state);
 	void UpdatePossibleStates();
 
-	void DoStep(LexicalToken*& istream, LexicalToken* end);
+	virtual ast::NodePtr DoStep(LexicalToken*& istream, LexicalToken* end, const ast::NodePtr& inputNode);
 
 protected:
 	std::vector<StatePtr> m_states;

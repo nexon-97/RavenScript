@@ -1,4 +1,5 @@
 #include "TerminalState.hpp"
+#include "ast/StringLiteralNode.hpp"
 
 namespace ravenscript
 {
@@ -16,16 +17,18 @@ TerminalState::~TerminalState()
 
 }
 
-bool TerminalState::Parse(LexicalToken*& istream, LexicalToken* end)
+ast::NodePtr TerminalState::Parse(LexicalToken*& istream, LexicalToken* end, const ast::NodePtr& inputNode)
 {
-	//(*istream)++;
-	return true;
+	auto output = std::make_shared<ast::StringLiteralNode>(istream->GetValue());
+	istream++;
+
+	return output;
 }
 
 bool TerminalState::IsAvailable(LexicalToken*& istream, LexicalToken* end)
 {
-	return false;
-	//return m_availableSymbols.find(*istream) != m_availableSymbols.end();
+	int length = strlen(istream->GetValue());
+	return length == 1;
 }
 
 }

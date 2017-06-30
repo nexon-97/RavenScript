@@ -33,18 +33,16 @@ void StateMachine::AddTransition(const StatePtr& from, const StatePtr& to, int p
 	m_transitions.push_back(std::make_shared<Transition>(from, to, priority));
 }
 
-bool StateMachine::Parse(LexicalToken*& istream, LexicalToken* end)
+ast::NodePtr StateMachine::Parse(LexicalToken*& istream, LexicalToken* end, const ast::NodePtr& inputNode)
 {
 	// Reset fsm state to entry
 	SetCurrentState(m_entryState);
 
 	// Enter recursion
-	DoStep(istream, end);
-
-	return std::find(m_possibleStates.begin(), m_possibleStates.end(), m_finalState) != m_possibleStates.end();
+	return DoStep(istream, end, inputNode);
 }
 
-void StateMachine::DoStep(LexicalToken*& istream, LexicalToken* end)
+ast::NodePtr StateMachine::DoStep(LexicalToken*& istream, LexicalToken* end, const ast::NodePtr& inputNode)
 {
 	std::vector<StatePtr> validStates;
 	auto validStateFilter = [&istream, end](const StatePtr& state)
@@ -54,15 +52,28 @@ void StateMachine::DoStep(LexicalToken*& istream, LexicalToken* end)
 
 	std::copy_if(m_possibleStates.begin(), m_possibleStates.end(), std::back_inserter(validStates), validStateFilter);
 
+	ast::NodePtr parseResult;
 	for (const StatePtr& state : validStates)
 	{
 		SetCurrentState(state);
 
-		if (state->Parse(istream, end))
+		parseResult = state->Parse(istream, end, inputNode);
+		if (!!parseResult)
 		{
-			DoStep(istream, end);
+			return DoStep(istream, end, parseResult);
 		}
 	}
+
+	if (!parseResult)
+	{
+		bool canTransitToFinalState = std::find(m_possibleStates.begin(), m_possibleStates.end(), m_finalState) != m_possibleStates.end();
+		if (canTransitToFinalState)
+		{
+			parseResult = inputNode;
+		}
+	}
+
+	return parseResult;
 }
 
 bool StateMachine::IsAvailable(LexicalToken*& istream, LexicalToken* end)
