@@ -18,9 +18,29 @@ StateMachine::StateMachine()
 	AddState(m_finalState);
 }
 
+StateMachine::StateMachine(StateMachine& stateMachine)
+{
+	SetName(stateMachine.GetName());
+
+	for (const auto& state : stateMachine.m_states)
+	{
+		m_states.push_back(state->Clone());
+	}
+
+	/*for (const auto& transition : stateMachine.m_transitions)
+	{
+		m_transitions.push_back(std::make_shared<Transition>(nullptr, nullptr, 0));
+	}*/
+}
+
 StateMachine::~StateMachine()
 {
 
+}
+
+StatePtr StateMachine::Clone()
+{
+	return StatePtr(new StateMachine(*this));
 }
 
 void StateMachine::AddState(const StatePtr& state)
@@ -45,12 +65,7 @@ ast::NodePtr StateMachine::Parse(LexicalToken*& istream, LexicalToken* end, cons
 ast::NodePtr StateMachine::DoStep(LexicalToken*& istream, LexicalToken* end, const ast::NodePtr& inputNode)
 {
 	std::vector<StatePtr> validStates;
-	auto validStateFilter = [&istream, end](const StatePtr& state)
-	{
-		return state->IsAvailable(istream, end);
-	};
-
-	std::copy_if(m_possibleStates.begin(), m_possibleStates.end(), std::back_inserter(validStates), validStateFilter);
+	ConstructValidStates(validStates, istream, end);
 
 	ast::NodePtr parseResult;
 	for (const StatePtr& state : validStates)
@@ -117,6 +132,16 @@ void StateMachine::UpdatePossibleStates()
 	{
 		m_possibleStates.push_back(transition->GetDestinationState());
 	}
+}
+
+void StateMachine::ConstructValidStates(std::vector<StatePtr>& validStates, LexicalToken*& istream, LexicalToken* end)
+{
+	auto validStateFilter = [&istream, end](const StatePtr& state)
+	{
+		return state->IsAvailable(istream, end);
+	};
+
+	std::copy_if(m_possibleStates.begin(), m_possibleStates.end(), std::back_inserter(validStates), validStateFilter);
 }
 
 }

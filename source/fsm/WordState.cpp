@@ -24,5 +24,10 @@ bool WordState::IsAvailable(LexicalToken*& istream, LexicalToken* end)
 	return strcmp(istream->GetValue(), m_word) == 0;
 }
 
+StatePtr WordState::Clone()
+{
+	return StatePtr(new WordState(*this));
+}
+
 }
 }

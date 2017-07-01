@@ -14,7 +14,10 @@ class StateMachine : public State
 {
 public:
 	StateMachine();
+	StateMachine(StateMachine& stateMachine);
 	virtual ~StateMachine();
+
+	virtual StatePtr Clone() override;
 
 	void AddState(const StatePtr& state);
 	void AddTransition(const StatePtr& from, const StatePtr& to, int priority);
@@ -27,9 +30,10 @@ public:
 
 protected:
 	virtual void SetCurrentState(const StatePtr& state);
-	void UpdatePossibleStates();
-
 	virtual ast::NodePtr DoStep(LexicalToken*& istream, LexicalToken* end, const ast::NodePtr& inputNode);
+
+	void UpdatePossibleStates();
+	void ConstructValidStates(std::vector<StatePtr>& validStates, LexicalToken*& istream, LexicalToken* end);
 
 protected:
 	std::vector<StatePtr> m_states;

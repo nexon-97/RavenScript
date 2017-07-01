@@ -30,5 +30,10 @@ bool DigitState::IsAvailable(LexicalToken*& istream, LexicalToken* end)
 	return istream->GetType() == LexicalToken::TokenType::Digit;
 }
 
+StatePtr DigitState::Clone()
+{
+	return StatePtr(new DigitState(*this));
+}
+
 }
 }

@@ -9,6 +9,8 @@ namespace fsm
 class LetterState : public State
 {
 public:
+	virtual StatePtr Clone() override;
+
 	virtual ast::NodePtr Parse(LexicalToken*& istream, LexicalToken* end, const ast::NodePtr& inputNode) override;
 	virtual bool IsAvailable(LexicalToken*& istream, LexicalToken* end) override;
 };

@@ -31,5 +31,10 @@ bool TerminalState::IsAvailable(LexicalToken*& istream, LexicalToken* end)
 	return length == 1;
 }
 
+StatePtr TerminalState::Clone()
+{
+	return StatePtr(new TerminalState(*this));
+}
+
 }
 }

@@ -1,6 +1,6 @@
 #include "ExpressionTestSuite.hpp"
 #include "fsm/TerminalState.hpp"
-#include "TokenTestCase.hpp"
+#include "ExpressionTestCase.hpp"
 #include "fsm/StateMachineConstructor.hpp"
 #include <set>
 #include <ostream>
@@ -16,7 +16,7 @@ ExpressionTestSuite::ExpressionTestSuite()
 	m_stateMachine = constructor.ConstructExpressionFSM();
 
 	// Register test cases
-	RegisterTestCase(std::make_shared<TokenTestCase>("1", "somevar = 25", m_stateMachine));
+	RegisterTestCase(std::make_shared<ExpressionTestCase>("1", "somevar = 25", m_stateMachine));
 }
 
 }

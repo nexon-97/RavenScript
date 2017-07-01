@@ -25,5 +25,10 @@ bool EmptyState::IsAvailable(LexicalToken*& istream, LexicalToken* end)
 	return false;
 }
 
+StatePtr EmptyState::Clone()
+{
+	return StatePtr(new EmptyState(*this));
+}
+
 }
 }

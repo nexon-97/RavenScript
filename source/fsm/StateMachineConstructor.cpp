@@ -67,6 +67,8 @@ StateMachinePtr StateMachineConstructor::ConstructExpressionFSM()
 
 	auto identifierState = ConstructIdentifierFSM();
 	identifierState->SetName("[ID 1]");
+	auto numberState = std::make_shared<DigitState>();
+	numberState->SetName("[NUMBER]");
 	auto braceOpenState = std::make_shared<TerminalState>(std::set<char> { '(' });
 	braceOpenState->SetName("[(]");
 	auto braceCloseState = std::make_shared<TerminalState>(std::set<char> { ')' });
@@ -97,6 +99,9 @@ StateMachinePtr StateMachineConstructor::ConstructExpressionFSM()
 
 	expressionFsm->AddTransition(startState, identifierState, 0);
 	expressionFsm->AddTransition(identifierState, finalState, 0);
+
+	expressionFsm->AddTransition(startState, numberState, 0);
+	expressionFsm->AddTransition(numberState, finalState, 0);
 
 	return expressionFsm;
 }

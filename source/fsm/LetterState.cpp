@@ -19,5 +19,10 @@ bool LetterState::IsAvailable(LexicalToken*& istream, LexicalToken* end)
 	return istream->GetType() == LexicalToken::TokenType::Letter;
 }
 
+StatePtr LetterState::Clone()
+{
+	return StatePtr(new LetterState(*this));
+}
+
 }
 }

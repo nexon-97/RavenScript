@@ -10,11 +10,17 @@ namespace ravenscript
 namespace fsm
 {
 
+class State;
+using StatePtr = std::shared_ptr<State>;
+
 class State
 {
 public:
 	State();
+	State(State& state);
 	virtual ~State();
+
+	virtual StatePtr Clone() = 0;
 
 	virtual ast::NodePtr Parse(LexicalToken*& istream, LexicalToken* end, const ast::NodePtr& inputNode) = 0;
 	virtual bool IsAvailable(LexicalToken*& istream, LexicalToken* end) = 0;
@@ -25,8 +31,6 @@ public:
 protected:
 	std::string m_name;
 };
-
-using StatePtr = std::shared_ptr<State>;
 
 }
 }

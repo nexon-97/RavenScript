@@ -24,7 +24,10 @@ public:
 		std::vector<LexicalToken> tokensList;
 		tokenizer.Parse(const_cast<char*>(m_input.c_str()), tokensList);
 
-		m_result = m_stateMachine->Parse(tokensList);
+		LexicalToken* stream = tokensList.data();
+		LexicalToken* end = tokensList.data() + tokensList.size();
+		auto resultNode = m_stateMachine->Parse(stream, end, ast::NodePtr());
+		m_result = !!resultNode;
 
 		return m_result;
 	}
