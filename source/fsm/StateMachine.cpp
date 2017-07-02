@@ -1,5 +1,6 @@
 #include "StateMachine.hpp"
 #include "EmptyState.hpp"
+#include "ast/BinaryOperatorNode.hpp"
 #include <algorithm>
 #include <iterator>
 #include <functional>
@@ -105,7 +106,15 @@ ast::NodePtr StateMachine::Parse(LexicalToken*& istream, LexicalToken* end, cons
 	SetCurrentState(m_entryState);
 
 	// Enter recursion
-	return DoStep(istream, end, inputNode);
+	auto result = DoStep(istream, end, inputNode);
+
+	if (auto binaryOpNode = std::dynamic_pointer_cast<ast::BinaryOperatorNode>(inputNode))
+	{
+		binaryOpNode->SetRValue(result);
+		return binaryOpNode;
+	}
+
+	return result;
 }
 
 ast::NodePtr StateMachine::DoStep(LexicalToken*& istream, LexicalToken* end, const ast::NodePtr& inputNode)

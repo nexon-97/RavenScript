@@ -5,6 +5,7 @@
 #include "WordState.hpp"
 #include "IdentifierStateMachine.hpp"
 #include "RecursiveState.hpp"
+#include "OperatorState.hpp"
 
 namespace ravenscript
 {
@@ -24,8 +25,6 @@ StateMachinePtr StateMachineConstructor::ConstructIdentifierFSM()
 	letterState->SetName("[LETTER]");
 	auto digitState = std::make_shared<DigitState>();
 	digitState->SetName("[DIGIT]");
-	identifierFsm->AddState(letterState);
-	identifierFsm->AddState(digitState);
 
 	identifierFsm->AddTransition(startState, letterState, 0);
 	identifierFsm->AddTransition(letterState, digitState, 0);
@@ -45,12 +44,10 @@ StateMachinePtr StateMachineConstructor::ConstructOperatorFSM()
 	auto finalState = operatorFsm->GetFinalState();
 	finalState->SetName("[FINAL]");
 
-	auto dotState = std::make_shared<WordState>(".");
+	auto dotState = std::make_shared<OperatorState>(Operator::Index);
 	dotState->SetName("[.]");
-	auto assignmentState = std::make_shared<WordState>("=");
+	auto assignmentState = std::make_shared<OperatorState>(Operator::Assignment);
 	assignmentState->SetName("[=]");
-	operatorFsm->AddState(dotState);
-	operatorFsm->AddState(assignmentState);
 
 	operatorFsm->AddTransition(startState, dotState, 0);
 	operatorFsm->AddTransition(startState, assignmentState, 0);

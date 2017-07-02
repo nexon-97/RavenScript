@@ -47,5 +47,28 @@ std::string ValueOrEmpty(const char* str)
 	return (!!str) ? std::string(str) : std::string();
 }
 
+Operator CharToOperator(char c)
+{
+	switch (c)
+	{
+		case '=':
+			return Operator::Assignment;
+		case '.':
+			return Operator::Index;
+		case '+':
+			return Operator::Add;
+		case '-':
+			return Operator::Subtract;
+		case '*':
+			return Operator::Multiply;
+		case '/':
+			return Operator::Divide;
+		case '%':
+			return Operator::Mod;
+	}
+
+	return Operator::Undefined;
+}
+
 }
 }
