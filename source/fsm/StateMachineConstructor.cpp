@@ -4,6 +4,7 @@
 #include "LetterState.hpp"
 #include "WordState.hpp"
 #include "IdentifierStateMachine.hpp"
+#include "RecursiveState.hpp"
 
 namespace ravenscript
 {
@@ -13,6 +14,7 @@ namespace fsm
 StateMachinePtr StateMachineConstructor::ConstructIdentifierFSM()
 {
 	StateMachinePtr identifierFsm = std::make_shared<IdenitifierStateMachine>();
+	identifierFsm->SetName("[ID]");
 	auto startState = identifierFsm->GetEntryState();
 	auto finalState = identifierFsm->GetFinalState();
 	startState->SetName("[START]");
@@ -30,8 +32,6 @@ StateMachinePtr StateMachineConstructor::ConstructIdentifierFSM()
 	identifierFsm->AddTransition(digitState, letterState, 0);
 	identifierFsm->AddTransition(letterState, finalState, 0);
 	identifierFsm->AddTransition(digitState, finalState, 0);
-	identifierFsm->AddTransition(letterState, letterState, 0);
-	identifierFsm->AddTransition(digitState, digitState, 0);
 
 	return identifierFsm;
 }
@@ -39,6 +39,7 @@ StateMachinePtr StateMachineConstructor::ConstructIdentifierFSM()
 StateMachinePtr StateMachineConstructor::ConstructOperatorFSM()
 {
 	StateMachinePtr operatorFsm = std::make_shared<StateMachine>();
+	operatorFsm->SetName("[OPERATOR]");
 	auto startState = operatorFsm->GetEntryState();
 	startState->SetName("[START]");
 	auto finalState = operatorFsm->GetFinalState();
@@ -62,6 +63,7 @@ StateMachinePtr StateMachineConstructor::ConstructOperatorFSM()
 StateMachinePtr StateMachineConstructor::ConstructExpressionFSM()
 {
 	StateMachinePtr expressionFsm = std::make_shared<StateMachine>();
+	expressionFsm->SetName("[EXPRESSION]");
 	auto startState = expressionFsm->GetEntryState();
 	auto finalState = expressionFsm->GetFinalState();
 
@@ -75,11 +77,11 @@ StateMachinePtr StateMachineConstructor::ConstructExpressionFSM()
 	braceCloseState->SetName("[)]");
 	auto operatorState = ConstructOperatorFSM();
 	operatorState->SetName("[OP]");
-	auto expressionNestedState1 = std::make_shared<StateMachine>(*expressionFsm);
+	auto expressionNestedState1 = std::make_shared<RecursiveState>(expressionFsm.get());
 	expressionNestedState1->SetName("[EXPR 1]");
-	auto expressionNestedState2 = std::make_shared<StateMachine>(*expressionFsm);
+	auto expressionNestedState2 = std::make_shared<RecursiveState>(expressionFsm.get());
 	expressionNestedState2->SetName("[EXPR 2]");
-	auto identifierState2 = std::make_shared<StateMachine>(*identifierState);
+	auto identifierState2 = identifierState->Clone();
 	identifierState2->SetName("[ID 2]");
 
 	expressionFsm->AddState(identifierState);

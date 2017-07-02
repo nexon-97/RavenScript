@@ -27,7 +27,7 @@ public:
 		LexicalToken* stream = tokensList.data();
 		LexicalToken* end = tokensList.data() + tokensList.size();
 		auto resultNode = m_stateMachine->Parse(stream, end, ast::NodePtr());
-		m_result = !!resultNode;
+		m_result = !!resultNode && (stream == end);
 
 		return m_result;
 	}

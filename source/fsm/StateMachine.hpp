@@ -32,6 +32,7 @@ protected:
 	virtual void SetCurrentState(const StatePtr& state);
 	virtual ast::NodePtr DoStep(LexicalToken*& istream, LexicalToken* end, const ast::NodePtr& inputNode);
 
+	void Init();
 	void UpdatePossibleStates();
 	void ConstructValidStates(std::vector<StatePtr>& validStates, LexicalToken*& istream, LexicalToken* end);
 

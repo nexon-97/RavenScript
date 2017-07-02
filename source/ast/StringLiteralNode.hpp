@@ -15,7 +15,7 @@ public:
 	virtual std::string GetValue() override { return m_value; }
 
 private:
-	char* m_value;
+	std::string m_value;
 };
 
 }

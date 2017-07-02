@@ -13,13 +13,15 @@ public:
 	IdenitifierStateMachine();
 	virtual ~IdenitifierStateMachine() = default;
 
+	virtual StatePtr Clone() override;
+
 	virtual ast::NodePtr Parse(LexicalToken*& istream, LexicalToken* end, const ast::NodePtr& inputNode) override;
 
 protected:
 	virtual ast::NodePtr DoStep(LexicalToken*& istream, LexicalToken* end, const ast::NodePtr& inputNode);
 
 protected:
-	std::vector<ast::LiteralNodePtr> m_identifierParts;
+	std::vector<ast::LiteralNodePtr>* m_identifierParts;
 };
 
 using StateMachinePtr = std::shared_ptr<StateMachine>;

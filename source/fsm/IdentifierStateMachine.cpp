@@ -14,10 +14,19 @@ IdenitifierStateMachine::IdenitifierStateMachine()
 
 }
 
+StatePtr IdenitifierStateMachine::Clone()
+{
+	return StatePtr(new IdenitifierStateMachine(*this));
+}
+
 ast::NodePtr IdenitifierStateMachine::Parse(LexicalToken*& istream, LexicalToken* end, const ast::NodePtr& inputNode)
 {
 	// Reset fsm state to entry
 	SetCurrentState(m_entryState);
+
+	// Push identifier parts container for recursion
+	std::vector<ast::LiteralNodePtr> identifiersParts;
+	m_identifierParts = &identifiersParts;
 
 	// Enter recursion
 	auto output = DoStep(istream, end, inputNode);
@@ -26,7 +35,7 @@ ast::NodePtr IdenitifierStateMachine::Parse(LexicalToken*& istream, LexicalToken
 	{
 		// Construct identifier value
 		std::string idenitiferValue;
-		for (const auto& part : m_identifierParts)
+		for (const auto& part : identifiersParts)
 		{
 			idenitiferValue += part->GetValue();
 		}
@@ -40,27 +49,27 @@ ast::NodePtr IdenitifierStateMachine::Parse(LexicalToken*& istream, LexicalToken
 
 ast::NodePtr IdenitifierStateMachine::DoStep(LexicalToken*& istream, LexicalToken* end, const ast::NodePtr& inputNode)
 {
-	/// [TODO] Split state machine step into intependent phases
+	auto restoreState = m_currentState;
 
 	std::vector<StatePtr> validStates;
-	auto validStateFilter = [&istream, end](const StatePtr& state)
-	{
-		return state->IsAvailable(istream, end);
-	};
-
-	std::copy_if(m_possibleStates.begin(), m_possibleStates.end(), std::back_inserter(validStates), validStateFilter);
+	ConstructValidStates(validStates, istream, end);
 
 	ast::NodePtr parseResult;
 	for (const StatePtr& state : validStates)
 	{
+		LexicalToken* streamOffset = istream;
 		SetCurrentState(state);
 
 		parseResult = state->Parse(istream, end, inputNode);
 		auto literalNode = std::dynamic_pointer_cast<ast::LiteralNode>(parseResult);
 		if (!!literalNode)
 		{
-			m_identifierParts.push_back(literalNode);
+			m_identifierParts->push_back(literalNode);
 			return DoStep(istream, end, parseResult);
+		}
+		else
+		{
+			istream = streamOffset;
 		}
 	}
 
@@ -73,6 +82,7 @@ ast::NodePtr IdenitifierStateMachine::DoStep(LexicalToken*& istream, LexicalToke
 		}
 	}
 
+	SetCurrentState(restoreState);
 	return parseResult;
 }
 

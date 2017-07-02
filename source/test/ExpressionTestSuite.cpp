@@ -17,6 +17,11 @@ ExpressionTestSuite::ExpressionTestSuite()
 
 	// Register test cases
 	RegisterTestCase(std::make_shared<ExpressionTestCase>("1", "somevar = 25", m_stateMachine));
+	RegisterTestCase(std::make_shared<ExpressionTestCase>("2", "a.b = c", m_stateMachine));
+	RegisterTestCase(std::make_shared<ExpressionTestCase>("3", "5 = c", m_stateMachine));
+	RegisterTestCase(std::make_shared<ExpressionTestCase>("4", "a.5", m_stateMachine));
+	RegisterTestCase(std::make_shared<ExpressionTestCase>("5", "(a)", m_stateMachine));
+	RegisterTestCase(std::make_shared<ExpressionTestCase>("6", "(foo = bar.(nest))", m_stateMachine));
 }
 
 }

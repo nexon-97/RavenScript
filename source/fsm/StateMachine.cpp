@@ -11,6 +11,11 @@ namespace fsm
 
 StateMachine::StateMachine()
 {
+	Init();
+}
+
+void StateMachine::Init()
+{
 	m_entryState = std::make_shared<EmptyState>();
 	m_finalState = std::make_shared<EmptyState>();
 
@@ -22,15 +27,56 @@ StateMachine::StateMachine(StateMachine& stateMachine)
 {
 	SetName(stateMachine.GetName());
 
-	for (const auto& state : stateMachine.m_states)
+	// Copy transitions
+	std::vector<std::pair<StatePtr, StatePtr>> uniqueOriginalStates;
+	auto addUnique = [&uniqueOriginalStates](const StatePtr& state) -> StatePtr
 	{
-		m_states.push_back(state->Clone());
+		auto duplicateFinder = [state](const std::pair<StatePtr, StatePtr>& pair)
+		{
+			return pair.first == state;
+		};
+
+		auto it = std::find_if(uniqueOriginalStates.begin(), uniqueOriginalStates.end(), duplicateFinder);
+		if (it == uniqueOriginalStates.end())
+		{
+			auto clone = state->Clone();
+			uniqueOriginalStates.push_back(std::make_pair(state, clone));
+			return clone;
+		}
+		else
+		{
+			return it->second;
+		}
+	};
+
+	for (const auto& transition : stateMachine.m_transitions)
+	{
+		auto srcState = transition->GetSourceState();
+		auto destState = transition->GetDestinationState();
+
+		auto srcCopy = addUnique(srcState);
+		auto destCopy = addUnique(destState);
+
+		m_transitions.push_back(std::make_shared<Transition>(srcCopy, destCopy, transition->GetPriority()));
 	}
 
-	/*for (const auto& transition : stateMachine.m_transitions)
+	// Add all states to database
+	for (const auto& state : uniqueOriginalStates)
 	{
-		m_transitions.push_back(std::make_shared<Transition>(nullptr, nullptr, 0));
-	}*/
+		m_states.push_back(state.second);
+	}
+
+	// Find start & final states among the unique states
+	auto particularStateFinder = [&uniqueOriginalStates](const StatePtr& state)
+	{
+		auto it = std::find_if(uniqueOriginalStates.begin(), uniqueOriginalStates.end(),
+			[state](std::pair<StatePtr, StatePtr> pair) { return pair.first == state; });
+
+		return it->second;
+	};
+
+	m_entryState = particularStateFinder(stateMachine.GetEntryState());
+	m_finalState = particularStateFinder(stateMachine.GetFinalState());
 }
 
 StateMachine::~StateMachine()
@@ -64,18 +110,35 @@ ast::NodePtr StateMachine::Parse(LexicalToken*& istream, LexicalToken* end, cons
 
 ast::NodePtr StateMachine::DoStep(LexicalToken*& istream, LexicalToken* end, const ast::NodePtr& inputNode)
 {
+	auto restoreState = m_currentState;
+
 	std::vector<StatePtr> validStates;
 	ConstructValidStates(validStates, istream, end);
 
 	ast::NodePtr parseResult;
 	for (const StatePtr& state : validStates)
 	{
+		LexicalToken* streamOffset = istream;
 		SetCurrentState(state);
 
 		parseResult = state->Parse(istream, end, inputNode);
 		if (!!parseResult)
 		{
-			return DoStep(istream, end, parseResult);
+			SetCurrentState(state);
+			auto stepResult = DoStep(istream, end, parseResult);
+			if (!!stepResult)
+			{
+				return stepResult;
+			}
+			else
+			{
+				istream = streamOffset;
+				continue;
+			}
+		}
+		else
+		{
+			istream = streamOffset;
 		}
 	}
 
@@ -88,18 +151,28 @@ ast::NodePtr StateMachine::DoStep(LexicalToken*& istream, LexicalToken* end, con
 		}
 	}
 
+	SetCurrentState(restoreState);
 	return parseResult;
 }
 
 bool StateMachine::IsAvailable(LexicalToken*& istream, LexicalToken* end)
 {
+	// Temporary set entry state to test fsm for availability
+	auto currentState = m_currentState;
+	SetCurrentState(m_entryState);
+
+	// Find any valid transition from possible states
 	auto pred = [&istream, end](const StatePtr& state)
 	{
 		return state->IsAvailable(istream, end);
 	};
-	auto it = std::find_if(m_states.begin(), m_states.end(), pred);
+	auto it = std::find_if(m_possibleStates.begin(), m_possibleStates.end(), pred);
+	bool result = it != m_possibleStates.end();
 
-	return it != m_states.end();
+	// Restore current state
+	SetCurrentState(currentState);
+
+	return result;
 }
 
 void StateMachine::SetCurrentState(const StatePtr& state)
@@ -136,6 +209,10 @@ void StateMachine::UpdatePossibleStates()
 
 void StateMachine::ConstructValidStates(std::vector<StatePtr>& validStates, LexicalToken*& istream, LexicalToken* end)
 {
+	// Leave empty valid states list, if stream has ended
+	if (istream == end)
+		return;
+
 	auto validStateFilter = [&istream, end](const StatePtr& state)
 	{
 		return state->IsAvailable(istream, end);

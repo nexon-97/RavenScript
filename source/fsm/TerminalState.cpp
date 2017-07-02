@@ -28,7 +28,13 @@ ast::NodePtr TerminalState::Parse(LexicalToken*& istream, LexicalToken* end, con
 bool TerminalState::IsAvailable(LexicalToken*& istream, LexicalToken* end)
 {
 	int length = strlen(istream->GetValue());
-	return length == 1;
+	if (length == 1)
+	{
+		char symbol = *istream->GetValue();
+		return m_availableSymbols.find(symbol) != m_availableSymbols.end();
+	}
+	
+	return false;
 }
 
 StatePtr TerminalState::Clone()
