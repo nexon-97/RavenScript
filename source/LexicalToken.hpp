@@ -23,8 +23,6 @@ public:
 		Digit,
 		Space,
 		Sign,
-		Brace,
-		EndOfFile,
 		Undefined,
 	};
 

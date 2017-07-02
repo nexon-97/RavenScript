@@ -58,7 +58,7 @@ bool LexicalTokenizer::Parse(char* textBlob, std::vector<LexicalToken>& tokensLi
 			return false;
 		}
 
-		if (group != currentGroup)
+		if (group != currentGroup || group == LexicalToken::SymbolGroup::Sign)
 		{
 			// Write only non-empty tokens to the result list
 			saveCurrentToken();

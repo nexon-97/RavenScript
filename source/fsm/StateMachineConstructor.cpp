@@ -81,13 +81,18 @@ StateMachinePtr StateMachineConstructor::ConstructExpressionFSM()
 	expressionNestedState1->SetName("[EXPR 1]");
 	auto expressionNestedState2 = std::make_shared<RecursiveState>(expressionFsm.get());
 	expressionNestedState2->SetName("[EXPR 2]");
+	auto expressionNestedState3 = std::make_shared<RecursiveState>(expressionFsm.get());
+	expressionNestedState3->SetName("[EXPR 3]");
 	auto identifierState2 = identifierState->Clone();
 	identifierState2->SetName("[ID 2]");
-
-	expressionFsm->AddState(identifierState);
-	expressionFsm->AddState(braceOpenState);
-	expressionFsm->AddState(braceCloseState);
-	expressionFsm->AddState(operatorState);
+	auto identifierState3 = identifierState->Clone();
+	identifierState3->SetName("[ID 3]");
+	auto braceOpenState2 = braceOpenState->Clone();
+	braceOpenState2->SetName("[(]");
+	auto braceCloseState2 = braceCloseState->Clone();
+	braceCloseState2->SetName("[)]");
+	auto commaState = std::make_shared<TerminalState>(std::set<char> { ',' });
+	commaState->SetName("[,]");
 
 	expressionFsm->AddTransition(startState, braceOpenState, 2);
 	expressionFsm->AddTransition(braceOpenState, expressionNestedState1, 0);
@@ -104,6 +109,15 @@ StateMachinePtr StateMachineConstructor::ConstructExpressionFSM()
 
 	expressionFsm->AddTransition(startState, numberState, 0);
 	expressionFsm->AddTransition(numberState, finalState, 0);
+
+	expressionFsm->AddTransition(startState, identifierState3, 2);
+	expressionFsm->AddTransition(identifierState3, braceOpenState2, 0);
+	expressionFsm->AddTransition(braceOpenState2, expressionNestedState3, 0);
+	expressionFsm->AddTransition(expressionNestedState3, commaState, 0);
+	expressionFsm->AddTransition(commaState, expressionNestedState3, 0);
+	expressionFsm->AddTransition(expressionNestedState3, braceCloseState2, 0);
+	expressionFsm->AddTransition(braceOpenState2, braceCloseState2, 0);
+	expressionFsm->AddTransition(braceCloseState2, finalState, 0);
 
 	return expressionFsm;
 }
