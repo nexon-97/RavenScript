@@ -13,6 +13,7 @@ public:
 	explicit OperatorState(Operator op) : m_operator(op) {}
 
 	virtual StatePtr Clone() override;
+	virtual StateId GetId() const { return StateId::Operator; }
 
 	virtual ast::NodePtr Parse(LexicalToken*& istream, LexicalToken* end, const ast::NodePtr& inputNode) override;
 	virtual bool IsAvailable(LexicalToken*& istream, LexicalToken* end) override;

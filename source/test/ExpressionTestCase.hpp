@@ -29,6 +29,11 @@ public:
 		auto resultNode = m_stateMachine->Parse(stream, end, ast::NodePtr());
 		m_result = !!resultNode && (stream == end);
 
+		/*if (m_result)
+		{
+			resultNode->Print(std::cout, 0);
+		}*/
+
 		return m_result;
 	}
 

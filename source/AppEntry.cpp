@@ -18,18 +18,18 @@ int main(int argc, char** argv)
 {
 	std::cout << "RavenScript " << GetVersionString() << std::endl;
 
-	auto interpreter = ravenscript::Interpreter();
-	interpreter.DoFile("script\\init.rs");
+	//auto interpreter = ravenscript::Interpreter();
+	//interpreter.DoFile("script\\init.rs");
 
 	using namespace ravenscript::fsm;
 	using namespace ravenscript::test;
 	
 	// Perform unit testing
-	IdentifierTestSuite identifierTestSuite;
-	identifierTestSuite.Test(std::cout);
+	//IdentifierTestSuite identifierTestSuite;
+	//identifierTestSuite.Test(std::cout);
 
-	OperatorTestSuite operatorTestSuite;
-	operatorTestSuite.Test(std::cout);
+	//OperatorTestSuite operatorTestSuite;
+	//operatorTestSuite.Test(std::cout);
 
 	ExpressionTestSuite expressionTestSuite;
 	expressionTestSuite.Test(std::cout);

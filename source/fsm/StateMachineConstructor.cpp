@@ -6,6 +6,7 @@
 #include "IdentifierStateMachine.hpp"
 #include "RecursiveState.hpp"
 #include "OperatorState.hpp"
+#include "FunctionCallState.hpp"
 
 namespace ravenscript
 {
@@ -61,6 +62,7 @@ StateMachinePtr StateMachineConstructor::ConstructExpressionFSM()
 {
 	StateMachinePtr expressionFsm = std::make_shared<StateMachine>();
 	expressionFsm->SetName("[EXPRESSION]");
+	expressionFsm->SetId(StateId::Expression);
 	auto startState = expressionFsm->GetEntryState();
 	auto finalState = expressionFsm->GetFinalState();
 
@@ -70,28 +72,22 @@ StateMachinePtr StateMachineConstructor::ConstructExpressionFSM()
 	numberState->SetName("[NUMBER]");
 	auto braceOpenState = std::make_shared<TerminalState>(std::set<char> { '(' });
 	braceOpenState->SetName("[(]");
+	braceOpenState->SetId(StateId::BraceOpen);
 	auto braceCloseState = std::make_shared<TerminalState>(std::set<char> { ')' });
 	braceCloseState->SetName("[)]");
+	braceOpenState->SetId(StateId::BraceClose);
 	auto operatorState = ConstructOperatorFSM();
 	operatorState->SetName("[OP]");
 	auto expressionNestedState1 = std::make_shared<RecursiveState>(expressionFsm.get());
 	expressionNestedState1->SetName("[EXPR 1]");
 	auto expressionNestedState2 = std::make_shared<RecursiveState>(expressionFsm.get());
 	expressionNestedState2->SetName("[EXPR 2]");
-	auto expressionNestedState3 = std::make_shared<RecursiveState>(expressionFsm.get());
-	expressionNestedState3->SetName("[EXPR 3]");
 	auto identifierState2 = identifierState->Clone();
 	identifierState2->SetName("[ID 2]");
-	auto identifierState3 = identifierState->Clone();
-	identifierState3->SetName("[ID 3]");
-	auto braceOpenState2 = braceOpenState->Clone();
-	braceOpenState2->SetName("[(]");
-	auto braceCloseState2 = braceCloseState->Clone();
-	braceCloseState2->SetName("[)]");
-	auto commaState = std::make_shared<TerminalState>(std::set<char> { ',' });
-	commaState->SetName("[,]");
 
-	expressionFsm->AddTransition(startState, braceOpenState, 2);
+	auto functionCallState = ConstructFunctionCallFSM(expressionFsm.get());
+
+	expressionFsm->AddTransition(startState, braceOpenState, 0);
 	expressionFsm->AddTransition(braceOpenState, expressionNestedState1, 0);
 	expressionFsm->AddTransition(expressionNestedState1, braceCloseState, 0);
 	expressionFsm->AddTransition(braceCloseState, finalState, 0);
@@ -107,16 +103,39 @@ StateMachinePtr StateMachineConstructor::ConstructExpressionFSM()
 	expressionFsm->AddTransition(startState, numberState, 0);
 	expressionFsm->AddTransition(numberState, finalState, 0);
 
-	expressionFsm->AddTransition(startState, identifierState3, 2);
-	expressionFsm->AddTransition(identifierState3, braceOpenState2, 0);
-	expressionFsm->AddTransition(braceOpenState2, expressionNestedState3, 0);
-	expressionFsm->AddTransition(expressionNestedState3, commaState, 0);
-	expressionFsm->AddTransition(commaState, expressionNestedState3, 0);
-	expressionFsm->AddTransition(expressionNestedState3, braceCloseState2, 0);
-	expressionFsm->AddTransition(braceOpenState2, braceCloseState2, 0);
-	expressionFsm->AddTransition(braceCloseState2, finalState, 0);
+	expressionFsm->AddTransition(startState, functionCallState, 2);
+	expressionFsm->AddTransition(functionCallState, finalState, 0);
 
 	return expressionFsm;
+}
+
+StateMachinePtr StateMachineConstructor::ConstructFunctionCallFSM(StateMachine* expressionFsm)
+{
+	StateMachinePtr funcCallFsm = std::make_shared<FunctionCallState>();
+	funcCallFsm->SetName("[FUNC CALL]");
+	auto startState = funcCallFsm->GetEntryState();
+	auto finalState = funcCallFsm->GetFinalState();
+
+	auto identifierState = ConstructIdentifierFSM();
+	auto braceOpenState = std::make_shared<TerminalState>(std::set<char> { '(' });
+	braceOpenState->SetId(StateId::BraceOpen);
+	auto braceCloseState = std::make_shared<TerminalState>(std::set<char> { ')' });
+	braceCloseState->SetId(StateId::BraceClose);
+	auto expressionState = std::make_shared<RecursiveState>(expressionFsm);
+	expressionState->SetName("[EXPR]");
+	auto commaState = std::make_shared<TerminalState>(std::set<char> { ',' });
+	commaState->SetId(StateId::Comma);
+
+	funcCallFsm->AddTransition(startState, identifierState, 0);
+	funcCallFsm->AddTransition(identifierState, braceOpenState, 0);
+	funcCallFsm->AddTransition(braceOpenState, expressionState, 0);
+	funcCallFsm->AddTransition(expressionState, commaState, 1);
+	funcCallFsm->AddTransition(commaState, expressionState, 0);
+	funcCallFsm->AddTransition(expressionState, braceCloseState, 0);
+	funcCallFsm->AddTransition(braceOpenState, braceCloseState, 0);
+	funcCallFsm->AddTransition(braceCloseState, finalState, 0);
+
+	return funcCallFsm;
 }
 
 }

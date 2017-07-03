@@ -18,7 +18,7 @@ public:
 	void SetRValue(const NodePtr& rvalue) { m_rvalue = rvalue; }
 	NodePtr GetRValue() const { return m_rvalue; }
 
-private:
+protected:
 	Operator m_operator;
 	NodePtr m_rvalue;
 };

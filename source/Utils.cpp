@@ -70,5 +70,28 @@ Operator CharToOperator(char c)
 	return Operator::Undefined;
 }
 
+char OperatorToChar(Operator op)
+{
+	switch (op)
+	{
+		case Operator::Assignment:
+			return '=';
+		case Operator::Index:
+			return '.';
+		case Operator::Add:
+			return '+';
+		case Operator::Subtract:
+			return '-';
+		case Operator::Multiply:
+			return '*';
+		case Operator::Divide:
+			return '/';
+		case Operator::Mod:
+			return '%';
+	}
+
+	return '/0';
+}
+
 }
 }

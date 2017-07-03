@@ -2,7 +2,6 @@
 #include "Stack.hpp"
 #include "Blob.hpp"
 #include "fsm/StateMachine.hpp"
-#include "fsm/ProductionId.hpp"
 
 namespace ravenscript
 {
@@ -21,7 +20,6 @@ protected:
 
 protected:
 	Stack m_stack;
-	fsm::StateMachinePtr m_productions[ProductionId::Count];
 };
 
 }

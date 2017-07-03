@@ -23,9 +23,13 @@ ExpressionTestSuite::ExpressionTestSuite()
 	RegisterTestCase(std::make_shared<ExpressionTestCase>("5", "(a)", m_stateMachine));
 	RegisterTestCase(std::make_shared<ExpressionTestCase>("6", "(foo = bar.(nest))", m_stateMachine));
 	RegisterTestCase(std::make_shared<ExpressionTestCase>("7", "func(25, a)", m_stateMachine));
-	RegisterTestCase(std::make_shared<ExpressionTestCase>("8", "func(a, bar(b), c)", m_stateMachine));
+	RegisterTestCase(std::make_shared<ExpressionTestCase>("8", "a = self.func(5, a)", m_stateMachine));
 	RegisterTestCase(std::make_shared<ExpressionTestCase>("9", "foo = bar()", m_stateMachine));
 	RegisterTestCase(std::make_shared<ExpressionTestCase>("10", "foo.a = self.bar(foo.b)", m_stateMachine));
+
+	RegisterTestCase(std::make_shared<ExpressionTestCase>("11", "x = func(y, )", m_stateMachine));
+	RegisterTestCase(std::make_shared<ExpressionTestCase>("12", "x = func()", m_stateMachine));
+	RegisterTestCase(std::make_shared<ExpressionTestCase>("13", "x = func()()", m_stateMachine));
 }
 
 }

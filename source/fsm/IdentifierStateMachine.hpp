@@ -14,6 +14,7 @@ public:
 	virtual ~IdenitifierStateMachine() = default;
 
 	virtual StatePtr Clone() override;
+	virtual StateId GetId() const { return StateId::Identifier; }
 
 	virtual ast::NodePtr Parse(LexicalToken*& istream, LexicalToken* end, const ast::NodePtr& inputNode) override;
 

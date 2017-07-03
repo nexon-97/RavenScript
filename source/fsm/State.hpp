@@ -4,6 +4,7 @@
 #include <vector>
 #include "LexicalToken.hpp"
 #include "ast/Node.hpp"
+#include "StateId.hpp"
 
 namespace ravenscript
 {
@@ -22,6 +23,9 @@ public:
 
 	virtual StatePtr Clone() = 0;
 
+	void SetId(StateId id) { m_id = id; }
+	virtual StateId GetId() const { return m_id; }
+
 	virtual ast::NodePtr Parse(LexicalToken*& istream, LexicalToken* end, const ast::NodePtr& inputNode) = 0;
 	virtual bool IsAvailable(LexicalToken*& istream, LexicalToken* end) = 0;
 
@@ -29,6 +33,7 @@ public:
 	const std::string& GetName() const { return m_name; }
 
 protected:
+	StateId m_id = StateId::None;
 	std::string m_name;
 };
 

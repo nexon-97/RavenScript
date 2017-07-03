@@ -15,6 +15,9 @@ public:
 	StateMachinePtr ConstructIdentifierFSM();
 	StateMachinePtr ConstructOperatorFSM();
 	StateMachinePtr ConstructExpressionFSM();
+
+	// Function call uses expression fsm to define function parameters
+	StateMachinePtr ConstructFunctionCallFSM(StateMachine* expressionFsm);
 };
 
 }
