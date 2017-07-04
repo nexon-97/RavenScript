@@ -9,7 +9,11 @@ namespace ast
 class IdentifierNode : public Node
 {
 public:
-	explicit IdentifierNode(const std::string& value) : m_value(value) {}
+	explicit IdentifierNode(const std::string& value)
+		: m_value(value) 
+	{
+		SetType(NodeType::Identifier);
+	}
 	virtual ~IdentifierNode() = default;
 
 	const std::string& GetValue() const { return m_value; }

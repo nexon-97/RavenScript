@@ -10,11 +10,22 @@ namespace ast
 class BinaryOperatorNode : public OperatorNode
 {
 public:
-	explicit BinaryOperatorNode(Operator op) : OperatorNode(op) {}
+	explicit BinaryOperatorNode(Operator op) 
+		: OperatorNode(op) 
+	{
+		SetType(NodeType::BinaryOperator);
+	}
 	virtual ~BinaryOperatorNode() = default;
 
 	void SetLValue(const NodePtr& lvalue) { m_lvalue = lvalue; }
 	NodePtr GetLValue() const { return m_lvalue; }
+
+	virtual int GetPriority() const override;
+	virtual NodePtr GetSwappableL() const override;
+	virtual NodePtr GetSwappableR() const override;
+	virtual void InsertSwappableL(const NodePtr& node) override;
+	virtual void InsertSwappableR(const NodePtr& node) override;
+	virtual NodePtr Align() override;
 
 	virtual void Print(std::ostream& ostream, int padding) override
 	{

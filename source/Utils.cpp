@@ -90,7 +90,30 @@ char OperatorToChar(Operator op)
 			return '%';
 	}
 
-	return '/0';
+	return 0;
+}
+
+int GetOperatorPriority(Operator op)
+{
+	switch (op)
+	{
+	case Operator::Assignment:
+		return 0;
+	case Operator::Index:
+		return 100;
+	case Operator::Add:
+		return 1;
+	case Operator::Subtract:
+		return 1;
+	case Operator::Multiply:
+		return 2;
+	case Operator::Divide:
+		return 2;
+	case Operator::Mod:
+		return 2;
+	default:
+		return 0;
+	}
 }
 
 }

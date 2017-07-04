@@ -13,6 +13,7 @@ std::shared_ptr<tinyxml2::XMLDocument> LoadXmlFile(const char* path);
 std::string ValueOrEmpty(const char* str);
 Operator CharToOperator(char c);
 char OperatorToChar(Operator op);
+int GetOperatorPriority(Operator op);
 
 }
 }

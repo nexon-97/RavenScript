@@ -9,7 +9,11 @@ namespace ast
 class UnaryOperatorNode : public OperatorNode
 {
 public:
-	explicit UnaryOperatorNode(Operator op) : OperatorNode(op) {}
+	explicit UnaryOperatorNode(Operator op) 
+		: OperatorNode(op) 
+	{
+		SetType(NodeType::UnaryOperator);
+	}
 	virtual ~UnaryOperatorNode() = default;
 
 	NodePtr GetRValue() const { return m_rvalue; }

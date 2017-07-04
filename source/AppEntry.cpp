@@ -1,5 +1,6 @@
 #include <iostream>
 #include <sstream>
+#include <fstream>
 
 #include "Interpreter.hpp"
 #include "fsm/TerminalState.hpp"
@@ -31,8 +32,9 @@ int main(int argc, char** argv)
 	//OperatorTestSuite operatorTestSuite;
 	//operatorTestSuite.Test(std::cout);
 
+	std::ofstream output("output.xml", std::ios_base::out);
 	ExpressionTestSuite expressionTestSuite;
-	expressionTestSuite.Test(std::cout);
+	expressionTestSuite.Test(output);
 
 	system("pause");
 	return 0;

@@ -2,6 +2,7 @@
 #include "TestCase.hpp"
 #include "fsm/StateMachine.hpp"
 #include "LexicalTokenizer.hpp"
+#include "ast/PriorityAligner.hpp"
 
 namespace ravenscript
 {
@@ -26,13 +27,8 @@ public:
 
 		LexicalToken* stream = tokensList.data();
 		LexicalToken* end = tokensList.data() + tokensList.size();
-		auto resultNode = m_stateMachine->Parse(stream, end, ast::NodePtr());
-		m_result = !!resultNode && (stream == end);
-
-		/*if (m_result)
-		{
-			resultNode->Print(std::cout, 0);
-		}*/
+		m_resultNode = m_stateMachine->Parse(stream, end, ast::NodePtr());
+		m_result = !!m_resultNode && (stream == end);
 
 		return m_result;
 	}
@@ -40,11 +36,17 @@ public:
 	virtual void PrintResult(std::ostream& stream) override
 	{
 		stream << m_input << " is valid expression: " << (m_result ? "OK." : "FAIL.") << std::endl;
+		if (m_result)
+		{
+			m_resultNode = m_resultNode->Align();
+			m_resultNode->Print(stream, 0);
+		}
 	}
 
 protected:
 	std::string m_input;
 	fsm::StateMachinePtr m_stateMachine;
+	ast::NodePtr m_resultNode;
 };
 
 }
